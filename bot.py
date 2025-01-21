@@ -17,6 +17,7 @@ tree = app_commands.CommandTree(Client)
 async def on_ready():
     await tree.sync()
     print("Ready!")
+    
 
 
 def is_connected(interaction):
