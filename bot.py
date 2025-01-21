@@ -28,7 +28,7 @@ async def ping(interaction):
     await interaction.response.send_message(f"Latency is {Client.latency:.2f} seconds.")
     
 
-@tree.command(name="connect", description="Play the Future funk radio in VC")
+@tree.command(name="connect", description="Play the Future funk radio in VC. Can also move to another channel")
 async def connect(interaction):
     bot_voice = interaction.guild.voice_client
     user = interaction.user
@@ -53,9 +53,7 @@ async def connect(interaction):
         source = discord.FFmpegPCMAudio(executable="ffmpeg-master-latest-win64-gpl-shared\\bin\\ffmpeg.exe", source="https://stream.zeno.fm/48533y95cnruv")
         vc.play(source)
         await interaction.response.send_message(f"Now playing Future Funk Radio in {vc.channel.name}")
-
-        
-    
+ 
 
     else:
         await interaction.response.send_message("You need to be in a voice channel to use this command.")
