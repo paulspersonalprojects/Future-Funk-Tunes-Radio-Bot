@@ -15,7 +15,7 @@ tree = app_commands.CommandTree(Client)
 
 @Client.event
 async def on_ready():
-    await tree.sync(guild=discord.Object(id=765412221130899466))
+    await tree.sync()
     print("Ready!")
 
 
@@ -23,12 +23,12 @@ def is_connected(interaction):
     return interaction.user.voice
 
 # Ping command
-@tree.command(name="ping", description="Check bot latency", guild=discord.Object(id=765412221130899466))
+@tree.command(name="ping", description="Check bot latency")
 async def ping(interaction):
     await interaction.response.send_message(f"Latency is {Client.latency:.2f} seconds.")
     
 
-@tree.command(name="connect", description="Play the Future funk radio in VC", guild=discord.Object(id=765412221130899466))
+@tree.command(name="connect", description="Play the Future funk radio in VC")
 async def connect(interaction):
     bot_voice = interaction.guild.voice_client
     user = interaction.user
@@ -60,7 +60,7 @@ async def connect(interaction):
     else:
         await interaction.response.send_message("You need to be in a voice channel to use this command.")
 
-@tree.command(name="disconnecttt", description="Disconnect from VC", guild=discord.Object(id=765412221130899466))
+@tree.command(name="disconnecttt", description="Disconnect from VC")
 async def Disconnect(interaction):
     if is_connected(interaction):
         bot_voice = interaction.guild.voice_client
