@@ -1,9 +1,11 @@
-import discord, ffmpeg
+import discord
 from discord import app_commands
 from discord import FFmpegPCMAudio
 from dotenv import load_dotenv
 import os
-
+import requests
+import json
+import time
 
 
 load_dotenv()
@@ -16,8 +18,42 @@ tree = app_commands.CommandTree(Client)
 @Client.event
 async def on_ready():
     await tree.sync()
+    await Client.change_presence(activity=discord.Streaming(name=fetch_data(), url="https://zeno.fm/radio/future-fnk/"))
     print("Ready!")
-    
+
+    while True:
+        time.sleep(5) #Add Infinite Delay Loop that runs code every 5 seconds
+        await Client.change_presence(activity=discord.Streaming(name=fetch_data(), url="https://zeno.fm/radio/future-fnk/"))
+
+
+
+
+def fetch_data():
+    url = "https://api.zeno.fm/mounts/metadata/subscribe/48533y95cnruv"
+    try:
+        # Open a streaming connection to the URL
+        with requests.get(url, stream=True) as response:
+            if response.status_code == 200:
+                print("Listening for data...")
+                # Process lines as they arrive
+                for line in response.iter_lines(decode_unicode=True):
+                    if line and line.startswith("data:"):
+                        # Extract the JSON part after "data:"
+                        data_content = line[5:].strip()
+                        try:
+                            # Parse the JSON to extract the song name
+                            data_json = json.loads(data_content)
+                            song_name = data_json.get("streamTitle")
+                            if song_name:
+                                return song_name
+                        except json.JSONDecodeError:
+                            print("Error decoding JSON from data:", data_content)
+            else:
+                print(f"Failed to fetch data. HTTP Status Code: {response.status_code}")
+                return "error"
+    except requests.RequestException as e:
+        print(f"An error occurred: {e}")
+
 
 
 def is_connected(interaction):
@@ -68,6 +104,15 @@ async def Disconnect(interaction):
 
     else:
         await interaction.response.send_message(f"You are not in a voice channel")
+
+
+
+
+@tree.command(name="nowplaying", description="Check whats playing right now in the Radio")
+async def getsonginfo(interaction):
+    stream_title = fetch_data()
+    print(stream_title)
+    await interaction.response.send_message(f"Now Playing: " + stream_title)
 
 
 Client.run(os.getenv("Token"))
