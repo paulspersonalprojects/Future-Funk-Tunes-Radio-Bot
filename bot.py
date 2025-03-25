@@ -19,7 +19,7 @@ tree = app_commands.CommandTree(Client)
 async def on_ready():
     await tree.sync()
     await Client.change_presence(activity=discord.Streaming(name=fetch_data(), url="https://zeno.fm/radio/future-fnk/"))
-    print("Ready!")
+    print("Bot is up and running")
 
     while True:
         time.sleep(5) #Add Infinite Delay Loop that runs code every 5 seconds
